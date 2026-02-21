@@ -129,9 +129,9 @@ cor_fundo = #000000
 cor_borda = #000000
 
 [badge:modpack]
-texto = 👾 ModPack
-texto_en = 👾 ModPack
-cor_texto = #710ccf
+texto = 🎃 ModPack
+texto_en = 🎃 ModPack
+cor_texto = #ffc400
 cor_fundo = #000000
 cor_borda = #000000
 
