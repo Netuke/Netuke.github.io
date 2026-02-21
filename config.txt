@@ -425,8 +425,8 @@ nome_en = Home
 [aba:downloads]
 tipo_fixo = downloads
 icone = ⬇️
-nome = Downloads
-nome_en = Downloads
+nome = Mods
+nome_en = Mods
 
 # Aba 2 — Uma nova aba de downloads diferente
 [aba:jogos]
