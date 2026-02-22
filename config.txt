@@ -111,8 +111,9 @@ feat4_desc_en = Original content, carefully created by Netuke himself for the co
 texto = Novo
 texto_en = New
 cor_texto = #ff3d6e
-cor_fundo = #ff3d6e
-cor_borda = #ff3d6e
+cor_fundo = #000000
+cor_borda = #000000
+cor_contorno = #000000
 
 [badge:cancelado]
 texto = ❌ Cancelado
@@ -162,19 +163,21 @@ cor_fundo = #000000
 cor_borda = #000000
 cor_contorno = #000000
 
-[badge:atualizado]
-texto = 🔄 Atualizado
-texto_en = 🔄 Updated
-cor_texto = #00ffaa
-cor_fundo = #00cc88
-cor_borda = #00cc88
+[badge:embreve]
+texto = 🚧 Em Breve
+texto_en = 🚧 Soon
+cor_texto = #FF9800
+cor_fundo = #000000
+cor_borda = #000000
+cor_contorno = #000000
 
 [badge:beta]
 texto = 🧪 Beta
 texto_en = 🧪 Beta
 cor_texto = #ff9f40
-cor_fundo = #ff7700
-cor_borda = #ff7700
+cor_fundo = #000000
+cor_borda = #000000
+cor_contorno = #000000
 
 
 # ------------------------------------------------------------
@@ -285,6 +288,16 @@ tamanho = ~V1: 128,1 MB | V2: 216,1 MB | V3: 264,0 MB
 criador = Netuke Team
 badge = cancelado
 versoes = V1>>https://sub2unlock.com/2mop4 | V2>>https://sub2unlock.com/7CMS0 | V3>>https://sub2unlock.com/w9Ngn
+
+[item:bs_horizonbrawl]
+pagina = brawlstars
+categoria =
+titulo = Horizon Brawl
+titulo_en = Horizon Brawl
+icone = images/HorizonBrawlBG.png
+cor_fundo = #1ac030, #2e7044
+criador = Netuke Team
+badge = embreve
 
 # ── Friday Night Funkin ──
 
