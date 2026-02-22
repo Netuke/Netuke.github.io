@@ -317,7 +317,12 @@ function hexToRgba(hex,a){
 }
 function badgeStyle(b){
   const c=b.cor_texto||'#fff';
-  return `color:${c};background:${hexToRgba(b.cor_fundo||c,.12)};border:1px solid ${hexToRgba(b.cor_borda||c,.3)}`;
+  let style=`color:${c};background:${hexToRgba(b.cor_fundo||c,.12)};border:1px solid ${hexToRgba(b.cor_borda||c,.3)}`;
+  if(b.cor_contorno){
+    const o=b.cor_contorno;
+    style+=`;-webkit-text-stroke:1.5px ${o};paint-order:stroke fill`;
+  }
+  return style;
 }
 function isUrl(s){ return s&&(s.startsWith('http')||s.startsWith('/')||/\.(png|jpg|gif|webp|svg)/.test(s)); }
 
