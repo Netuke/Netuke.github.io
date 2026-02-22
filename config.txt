@@ -117,42 +117,42 @@ cor_borda = #ff3d6e
 [badge:cancelado]
 texto = ❌ Cancelado
 texto_en = ❌ Cancelled
-cor_texto = #ff0000
+cor_texto = #B71C1C
 cor_fundo = #000000
 cor_borda = #000000
 
 [badge:desatualizado]
-texto = ❌ Desatualizado
-texto_en = ❌ Outdated
-cor_texto = #ff0000
+texto = ⏳ Desatualizado
+texto_en = ⏳ Outdated
+cor_texto = #757575
 cor_fundo = #000000
 cor_borda = #000000
 
 [badge:modpack]
-texto = 🎃 ModPack
-texto_en = 🎃 ModPack
-cor_texto = #ffc400
+texto = 📦 ModPack
+texto_en = 📦 ModPack
+cor_texto = #6A1B9A
 cor_fundo = #000000
 cor_borda = #000000
 
 [badge:port]
-texto = ⭐ Port
-texto_en = ⭐ Port
-cor_texto = rgb(255, 251, 0)
+texto = 🔁 Port
+texto_en = 🔁 Port
+cor_texto = #1565C0
 cor_fundo = #000000
 cor_borda = #000000
 
 [badge:mod]
-texto = 🐸 Mod
-texto_en = 🐸 Mod
-cor_texto = #00ff4c
+texto = 🎮 Mod
+texto_en = 🎮 Mod
+cor_texto = #2E7D32
 cor_fundo = #000000
 cor_borda = #000000
 
 [badge:android]
 texto = 📱 Android
 texto_en = 📱 Android
-cor_texto = #00c3ff
+cor_texto = #A4C639
 cor_fundo = #000000
 cor_borda = #000000
 
