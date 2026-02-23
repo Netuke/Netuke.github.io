@@ -499,8 +499,23 @@ function buildCard(key,item,pgKey,cats,badges){
     ?`${pgKey.toUpperCase()} · ${cf(cats[item.categoria],'nome')||item.categoria}`
     :pgKey.toUpperCase();
   // Criador
+  // criador_icone: emoji, URL de imagem, ou 'yt' (padrão), 'dc', 'nenhum'
+  let criadorIconHtml='';
+  if(item.criador){
+    const ci=item.criador_icone||'yt';
+    if(ci==='yt')
+      criadorIconHtml=SVG_YT.replace('width="15" height="15"','width="10" height="10"').replace('fill="currentColor"','fill="#ff4444"');
+    else if(ci==='dc')
+      criadorIconHtml=SVG_DC(10);
+    else if(ci==='nenhum'||ci==='none')
+      criadorIconHtml='';
+    else if(isUrl(ci))
+      criadorIconHtml=`<img src="${ci}" style="width:10px;height:10px;border-radius:50%;object-fit:cover;flex-shrink:0"/>`;
+    else
+      criadorIconHtml=`<span style="font-size:10px;line-height:1">${ci}</span>`;
+  }
   const criadorHtml=item.criador
-    ?`<div class="dl-credit">${SVG_YT.replace('width="15" height="15"','width="10" height="10"').replace('fill="currentColor"','fill="#ff4444"')} ${currentLang==='en'?'Made by':'Feito por'} <span>${item.criador}</span></div>`
+    ?`<div class="dl-credit">${criadorIconHtml} ${currentLang==='en'?'Made by':'Feito por'} <span>${item.criador}</span></div>`
     :'';
 
   // ── VERSÕES — separador >> ──
