@@ -272,6 +272,7 @@ icone = images/PowerBrawlBG.png
 cor_fundo = #4a0086, #b700ff
 tamanho = ~V1: 159,1 MB | V2: 176,9 MB | V3: 190,9 MB | V4: 213,3 MB
 criador = Netuke Team
+criador_icone = 🎭
 badge = cancelado
 versoes = V1>>https://sub2unlock.com/8Tl9R | V2>>https://sub2unlock.com/UjJr5 | V3>>https://sub2unlock.com/dIi4U | V4>>https://sub2unlock.com/67iXM
 
@@ -286,6 +287,7 @@ icone = images/CosmicBrawlBG.png
 cor_fundo = #150061, #2700b3
 tamanho = ~V1: 128,1 MB | V2: 216,1 MB | V3: 264,0 MB
 criador = Netuke Team
+criador_icone = 🎭
 badge = cancelado
 versoes = V1>>https://sub2unlock.com/2mop4 | V2>>https://sub2unlock.com/7CMS0 | V3>>https://sub2unlock.com/w9Ngn
 
@@ -297,6 +299,7 @@ titulo_en = Horizon Brawl
 icone = images/HorizonBrawlBG.png
 cor_fundo = #1ac030, #2e7044
 criador = Netuke Team
+criador_icone = 🎭
 badge = embreve
 
 # ── Friday Night Funkin ──
@@ -312,6 +315,7 @@ icone = images/HyperFunkinBG.png
 cor_fundo = #050d55, #000000
 tamanho = ~V1: 2,0 GB | V2: 4,1 GB | V3: 4,4 GB
 criador = Netuke
+criador_icone = yt
 badge = cancelado | modpack
 versoes = V1>>https://sub2unlock.com/NA3my | V2>>https://sub2unlock.com/hEdck | V3>>https://sub2unlock.com/PbAWx
 
@@ -326,6 +330,7 @@ icone = images/LunariFunkinBG.png
 cor_fundo = #860097, #000000
 tamanho = ~V1: 563,6 MB | V2: 1,57 GB | V3: 2,14 GB
 criador = Netuke
+criador_icone = yt
 badge = modpack
 versoes = V1>>https://sub2unlock.com/NA3my | V2>>https://sub2unlock.com/hEdck | V3>>https://sub2unlock.com/PbAWx
 
@@ -340,6 +345,7 @@ icone = images/FridayNightSandboxinBG.png
 cor_fundo = #666666, #000000
 tamanho = ~44,8 MB
 criador = Netuke
+criador_icone = yt
 badge = port
 link = https://sub2unlock.com/EO5bo
 
@@ -354,6 +360,7 @@ icone = images/VsLorysBG.png
 cor_fundo = #666666, #000000
 tamanho = ~11,2 MB
 criador = Netuke
+criador_icone = yt
 badge = mod
 link = https://sub2unlock.com/9ElQx
 
@@ -368,6 +375,7 @@ icone = images/VsNothingBloxBG.png
 cor_fundo = #f5d000, #000000
 tamanho = ~12,3 MB
 criador = Netuke
+criador_icone = yt
 badge = mod
 link = https://sub2unlock.com/ZRTOT
 
@@ -382,6 +390,7 @@ icone = images/VsBBPanzuBG.png
 cor_fundo = #00ff00, #000000
 tamanho = ~10,1 MB
 criador = Netuke
+criador_icone = yt
 badge = port
 link = https://sub2unlock.com/WxvWb
 
@@ -412,6 +421,7 @@ icone = images/TEC9BG.png
 cor_fundo = #000000, #0c1524
 tamanho = ~42,7 MB
 criador = Netuke
+criador_icone = yt
 badge = desatualizado
 link = https://sub2unlock.com/oF3NI
 
@@ -473,6 +483,7 @@ icone = images/UndertaleBG.png
 cor_fundo = #a8a8a8, #000000f8
 tamanho = ~PT-BR: 123 MB | EN-US: 142,7 MB
 criador = Toby Fox
+criador_icone = yt
 versoes = PT-BR>>https://sub2unlock.com/34NC5 | EN-US>>https://sub2unlock.com/PF1ZI
 
 [item:jogos_omori]
@@ -486,6 +497,7 @@ icone = images/OmoriBG.png
 cor_fundo = #ffffff, #000000f8
 tamanho = ~PT-BR: 745,9 MB | EN-US: 686,2 MB
 criador = Omocat
+criador_icone = yt
 versoes = PT-BR>>https://sub2unlock.com/sl0B4 | EN-US>>https://sub2unlock.com/yXm5w
 
 [item:jogos_cuphead]
@@ -499,6 +511,7 @@ icone = images/CupheadBG.png
 cor_fundo = #ffee00, #000000f8
 tamanho = ~730,5 MB
 criador = Studio MDHR
+criador_icone = yt
 link = https://sub2unlock.com/Pox5e
 
 # ──────────────────────────────────────────────────────────
