@@ -332,7 +332,7 @@ tamanho = ~V1: 563,6 MB | V2: 1,57 GB | V3: 2,14 GB
 criador = Netuke
 criador_icone = yt
 badge = modpack
-versoes = V1>>https://sub2unlock.com/NA3my | V2>>https://sub2unlock.com/hEdck | V3>>https://sub2unlock.com/PbAWx
+versoes = V1>>https://sub2unlock.com/NA3my | V2>>https://sub2unlock.com/hEdck | V3>>https://sub2unlock.com/t8Y7u
 
 [item:fnf_fridaynightsandboxin_mod]
 pagina = fnf
