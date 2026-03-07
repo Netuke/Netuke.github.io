@@ -758,51 +758,73 @@ function cf(obj, key){
 }
 
 // ── MUSIC ──
-// Regra mobile: audio.play() só funciona dentro de um event handler direto do usuário.
-// Solução: nunca chamar audio.load() (quebra o contexto), setar src e chamar play() direto.
-// Se falhar, guardar o que queria tocar e retomar no próximo toque/clique.
+// Mobile policy: audio.play() precisa vir de um event handler na PRIMEIRA vez.
+// Depois que o usuário interagiu uma vez e o play teve sucesso,
+// o audio element fica desbloqueado e pode ser controlado de qualquer contexto
+// (inclusive IntersectionObserver callbacks).
 let currentMusic=null, musicPlaying=false;
-let _wantedSrc=null, _wantedName=null;
+let _audioUnlocked=false; // true após primeiro play() bem-sucedido
+let _pendingSrc=null, _pendingName=null, _pendingSourceType=null, _pendingSourceKey=null;
 let _currentMusicSource=null;
 const audio=document.getElementById('bg-audio');
+audio.loop=true; // loop nativo — mais confiável que evento ended
 
-// Loop: ao terminar, reinicia
-audio.addEventListener('ended',()=>{ audio.currentTime=0; audio.play().catch(()=>{}); });
-
-// ── Tenta dar play imediatamente (síncrono no contexto do evento)
-function _doPlay(src, name){
-  _wantedSrc=src;
-  _wantedName=name;
-  if(currentMusic!==src){
-    currentMusic=src;
-    audio.pause();
-    // SEM audio.load() — setar src direto mantém o contexto de interação no mobile
-    audio.src=src;
-  }
+// ── Interno: executa a troca de src e tenta play
+function _applyMusic(src, name, sourceType, sourceKey){
+  _currentMusicSource=sourceType?{type:sourceType,key:sourceKey}:null;
+  currentMusic=src;
+  audio.pause();
+  audio.src=src;       // sem audio.load() — preserva contexto de interação no mobile
   _updateMusicName(name||src);
   document.getElementById('music-bar').classList.add('show');
-  _setPlayBtn(false);
   musicPlaying=false;
+  _setPlayBtn(false);
   const p=audio.play();
   if(p&&p.then){
-    p.then(()=>{ musicPlaying=true; _setPlayBtn(true); })
-     .catch(()=>{ musicPlaying=false; _setPlayBtn(false); });
-    // não retornar — continua normalmente
+    p.then(()=>{
+      musicPlaying=true;
+      _audioUnlocked=true;
+      _pendingSrc=null;
+      _setPlayBtn(true);
+    }).catch(()=>{
+      // Bloqueado (mobile sem interação ainda) — guarda pendente
+      musicPlaying=false;
+      _setPlayBtn(false);
+      _pendingSrc=src; _pendingName=name;
+      _pendingSourceType=sourceType; _pendingSourceKey=sourceKey;
+    });
+  } else {
+    // API síncrona — assumir que tocou
+    musicPlaying=true;
+    _audioUnlocked=true;
+    _pendingSrc=null;
+    _setPlayBtn(true);
   }
 }
 
+// ── Pública: chamada por showPage, observers, init
 function playMusic(src, name, sourceType, sourceKey){
   if(!src){ silenceMusic(); return; }
-  _currentMusicSource=sourceType?{type:sourceType,key:sourceKey}:null;
-  if(currentMusic===src && musicPlaying) return; // já tocando
-  _doPlay(src, name);
+  if(currentMusic===src && musicPlaying) return; // já tocando essa
+  _applyMusic(src, name, sourceType||null, sourceKey||null);
 }
+
+// ── Retomar pendente na próxima interação humana
+function _resumePending(){
+  if(!_pendingSrc) return;
+  const s=_pendingSrc, n=_pendingName, st=_pendingSourceType, sk=_pendingSourceKey;
+  _pendingSrc=null;
+  _applyMusic(s, n, st, sk);
+}
+// touchstart é o mais cedo possível no mobile, antes do click
+document.addEventListener('touchstart', _resumePending, {passive:true, capture:true});
+document.addEventListener('click',      _resumePending, {capture:true});
 
 function silenceMusic(){
   audio.pause();
   currentMusic=null;
   musicPlaying=false;
-  _wantedSrc=null;
+  _pendingSrc=null;
   _currentMusicSource=null;
   _setPlayBtn(false);
   document.getElementById('music-bar').classList.remove('show');
@@ -812,30 +834,17 @@ function stopMusic(){
   audio.pause();
   audio.currentTime=0;
   musicPlaying=false;
-  _wantedSrc=null;
+  _pendingSrc=null;
   _setPlayBtn(false);
 }
 
 function toggleMusic(){
   if(musicPlaying){
-    audio.pause();
-    musicPlaying=false;
-    _setPlayBtn(false);
+    audio.pause(); musicPlaying=false; _setPlayBtn(false);
   } else if(currentMusic){
-    // Clique direto do usuário — funciona em mobile
-    audio.play().then(()=>{ musicPlaying=true; _setPlayBtn(true); }).catch(()=>{});
+    audio.play().then(()=>{ musicPlaying=true; _audioUnlocked=true; _setPlayBtn(true); }).catch(()=>{});
   }
 }
-
-// Retomar música pendente na próxima interação (mobile bloqueou o autoplay)
-function _resumeOnInteraction(){
-  if(!_wantedSrc || musicPlaying) return;
-  // Estamos dentro de um event handler — play é permitido
-  if(currentMusic!==_wantedSrc) audio.src=_wantedSrc;
-  audio.play().then(()=>{ musicPlaying=true; _setPlayBtn(true); }).catch(()=>{});
-}
-document.addEventListener('touchstart', _resumeOnInteraction, {passive:true, capture:true});
-document.addEventListener('click',      _resumeOnInteraction, {capture:true});
 
 function _updateMusicName(name){
   document.getElementById('music-name').textContent=name||'';
@@ -1102,17 +1111,12 @@ function setupMusicObservers(cfg){
       const sec=document.getElementById('section-'+dlKey+'-'+pk);
       if(!sec) return;
       new IntersectionObserver(entries=>{
-        const e=entries[0];
-        // Só reage quando entra em tela (ignora saída)
-        if(!e.isIntersecting) return;
-        // Aba de downloads precisa estar ativa
+        if(!entries[0].isIntersecting) return;
         if(!document.getElementById(dlPageId)?.classList.contains('active')) return;
-        // Aba com música própria → não sobrescreve
         if(dlAba?.musica) return;
-        // Já tocando essa → nada a fazer
         if(currentMusic===pg.musica && musicPlaying) return;
         playMusic(pg.musica, cf(pg,'nome')||pg.nome||pk, 'pagina', pk);
-      },{threshold:0.3, rootMargin:'0px 0px -20% 0px'}).observe(sec);
+      },{threshold:0.15}).observe(sec);
     });
   });
 }
@@ -1218,6 +1222,35 @@ function missionOverlayClick(e){
 document.addEventListener('keydown', e => { if(e.key==='Escape') closeMission(); });
 
 // ── INIT ──
+// Silêncio curto em base64 para desbloquear audio no mobile antes da música real
+const _SILENT = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
+
+function _unlockAudio(thenSrc, thenName, thenType, thenKey){
+  // Toca silêncio — inaudível mas desbloqueia o audio element
+  audio.src=_SILENT;
+  const p=audio.play();
+  if(p&&p.then){
+    p.then(()=>{
+      _audioUnlocked=true;
+      audio.pause();
+      // Agora toca a música real — audio já está desbloqueado
+      if(thenSrc) _applyMusic(thenSrc, thenName, thenType, thenKey);
+    }).catch(()=>{
+      // Autoplay bloqueado pelo browser (comum em mobile na primeira visita)
+      // A música fica pendente e toca no primeiro toque
+      _pendingSrc=thenSrc; _pendingName=thenName;
+      _pendingSourceType=thenType; _pendingSourceKey=thenKey;
+      // Mostrar barra com ▶ Play para o usuário saber que tem música
+      if(thenSrc){
+        currentMusic=thenSrc;
+        _updateMusicName(thenName||thenSrc);
+        document.getElementById('music-bar').classList.add('show');
+        _setPlayBtn(false);
+      }
+    });
+  }
+}
+
 async function init(){
   const raw=await loadConfig();
   if(!raw){
@@ -1228,23 +1261,16 @@ async function init(){
   _cfg=cfg;
   if(cfg.site.titulo) document.title=cfg.site.titulo;
 
-  // Build nav tabs from config
   buildNavTabs(cfg);
-
-  // Build all pages
   document.getElementById('app').innerHTML=buildAllPages(cfg)+buildFooter(cfg);
-
   setupMusicObservers(cfg);
 
-  // Activar primeira aba e tocar sua música (se tiver)
+  // Tocar música da primeira aba
   const firstAbaKey=Object.keys(cfg.abas)[0];
   if(firstAbaKey){
-    // Não usar showPage aqui pois silenceMusic() vai rodar sem precisar
-    // Só tocar a música da primeira aba diretamente
     const firstAba=cfg.abas[firstAbaKey];
     if(firstAba.musica){
-      // Tocar música da primeira aba — em mobile fica aguardando interação
-      playMusic(firstAba.musica, cf(firstAba,'nome')||firstAbaKey, 'aba', firstAbaKey);
+      _unlockAudio(firstAba.musica, cf(firstAba,'nome')||firstAbaKey, 'aba', firstAbaKey);
     }
   }
 }
