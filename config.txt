@@ -230,8 +230,8 @@ aba = jogos
 icone = images/GamesIcon.png
 nome = Jogos
 nome_en = Games
-descricao = Jogos & Muito Mais Para Android Ou PC
-descricao_en = Games & Much More For Android Or PC
+descricao = Jogos Pra Android/PC
+descricao_en = Games for Android/PC
 musica = musics/GamesMusic.ogg
 
 
