@@ -179,7 +179,7 @@ cor_contorno = #000000
 [badge:beta]
 texto = 🧪 Beta
 texto_en = 🧪 Beta
-cor_texto = #ff9f40
+cor_texto = #FF9800
 cor_fundo = #000000
 cor_borda = #000000
 cor_contorno = #000000
@@ -230,8 +230,8 @@ aba = jogos
 icone = images/GamesIcon.png
 nome = Jogos
 nome_en = Games
-descricao = Ports de Jogos para Android
-descricao_en = Game Ports for Android
+descricao = Jogos & Muito Mais Para Android Ou PC
+descricao_en = Games & Much More For Android Or PC
 musica = musics/GamesMusic.ogg
 
 
@@ -264,6 +264,10 @@ nome_en = V1.8
 nome = Android
 nome_en = Android
 
+[categoria:jogos:roblox]
+nome = Roblox
+nome_en = Roblox
+
 
 # ------------------------------------------------------------
 # ITENS DE DOWNLOAD
@@ -287,7 +291,6 @@ titulo_en = Power Brawl
 descricao = Power Brawl chegou para mudar completamente a forma como você joga. Esse não é só mais um mod, é uma nova experiência dentro do universo de Brawl Stars. Aqui você encontra brawlers inéditos, com habilidades únicas e estilos de jogo que realmente fazem diferença na arena. Cada personagem traz uma proposta diferente, exigindo estratégia, adaptação e domínio de mecânica.
 descricao_en = Power Brawl is here to completely change the way you play. This isn't just another mod — it's a brand new experience inside the Brawl Stars universe. You'll find brand new brawlers with unique abilities and playstyles that truly make a difference in the arena. Each character brings a different proposal, requiring strategy, adaptation and mechanical mastery.
 icone = images/PowerBrawlBG.png
-cor_fundo = #4a0086, #b700ff
 tamanho = ~V1: 159,1 MB | V2: 176,9 MB | V3: 190,9 MB | V4: 213,3 MB
 criador = Netuke Team
 criador_icone = 🎭
@@ -302,7 +305,6 @@ titulo_en = Cosmic Brawl
 descricao = Cosmic Brawl é um mod criado para renovar completamente sua experiência no Brawl Stars, trazendo conteúdo novo de verdade. Aqui você encontra brawlers exclusivos com habilidades próprias, mecânicas diferentes e estilos de jogo que realmente mudam o jeito de encarar cada partida.
 descricao_en = Cosmic Brawl is a mod created to completely refresh your Brawl Stars experience, bringing truly new content. You'll find exclusive brawlers with unique abilities, different mechanics and playstyles that genuinely change the way you approach every match.
 icone = images/CosmicBrawlBG.png
-cor_fundo = #150061, #2700b3
 tamanho = ~V1: 128,1 MB | V2: 216,1 MB | V3: 264,0 MB
 criador = Netuke Team
 criador_icone = 🎭
@@ -315,7 +317,6 @@ categoria =
 titulo = Horizon Brawl
 titulo_en = Horizon Brawl
 icone = images/HorizonBrawlBG.png
-cor_fundo = #1ac030, #2e7044
 criador = Netuke Team
 criador_icone = 🎭
 badge = embreve
@@ -330,7 +331,6 @@ titulo_en = Hyper Funkin
 descricao = Hyper Funkin é o modpack definitivo para quem quer viver o melhor de Friday Night Funkin' em um único lugar. Em vez de baixar vários mods separados, aqui você encontra uma coleção reunida, organizada e pronta para jogar, trazendo personagens icônicos, músicas marcantes e desafios que testam de verdade sua habilidade no ritmo.
 descricao_en = Hyper Funkin is the ultimate modpack for anyone who wants to experience the best of Friday Night Funkin' in one place. Instead of downloading multiple separate mods, here you'll find a unified, organized, and ready-to-play collection featuring iconic characters, memorable music, and challenges that truly test your rhythm skills.
 icone = images/HyperFunkinBG.png
-cor_fundo = #050d55, #000000
 tamanho = ~V1: 2,0 GB | V2: 4,1 GB | V3: 4,4 GB
 criador = Netuke
 criador_icone = yt
@@ -345,7 +345,6 @@ titulo_en = Lunari Funkin
 descricao = Lunari Funkin é um modpack criado para quem quer mergulhar em uma experiência mais intensa e diferenciada dentro de Friday Night Funkin'. Em vez de apenas reunir mods aleatórios, ele traz uma seleção pensada para oferecer variedade, desafio e identidade própria em cada semana.
 descricao_en = Lunari Funkin is a modpack created for those who want to immerse themselves in a more intense and unique experience within Friday Night Funkin'. Instead of simply gathering random mods, it offers a carefully curated selection designed to provide variety, challenge, and a distinct identity each week.
 icone = images/LunariFunkinBG.png
-cor_fundo = #860097, #000000
 tamanho = ~V1: 563,6 MB | V2: 1,57 GB | V3: 2,14 GB
 criador = Netuke
 criador_icone = yt
@@ -360,7 +359,6 @@ titulo_en = Friday Night Sandboxin
 descricao = Friday Night Sandboxin é um port feito para a Codename Engine que revive uma das ideias mais criativas já vistas na comunidade de Friday Night Funkin'. Inspirado nos clássicos jogos sandbox que marcaram época, o mod traz aquela sensação nostálgica de liberdade e caos criativo direto para o ritmo acelerado das batalhas musicais.
 descricao_en = Friday Night Sandboxin is a port made for the Codename Engine that revives one of the most creative ideas ever seen in the Friday Night Funkin' community. Inspired by classic sandbox games that marked an era, the mod brings that nostalgic feeling of freedom and creative chaos straight to the fast-paced rhythm of musical battles.
 icone = images/FridayNightSandboxinBG.png
-cor_fundo = #666666, #000000
 tamanho = ~44,8 MB
 criador = Netuke
 criador_icone = yt
@@ -375,7 +373,6 @@ titulo_en = V.S Lorys
 descricao = Mod em test.
 descricao_en = Mod in test.
 icone = images/VsLorysBG.png
-cor_fundo = #666666, #000000
 tamanho = ~11,2 MB
 criador = Netuke
 criador_icone = yt
@@ -390,7 +387,6 @@ titulo_en = V.S Nothing Blox
 descricao = V.S Nothing Blox é um mod desenvolvido para a Psych Engine que mergulha em um conflito muito mais profundo do que uma simples batalha musical. A história gira em torno de um garoto que carrega duas versões de si mesmo: uma que representa o bem, e outra que simboliza tudo o que ele tenta reprimir.
 descricao_en = V.S Nothing Blox is a mod developed for the Psych Engine that delves into a conflict far deeper than a simple musical battle. The story revolves around a boy who carries two versions of himself: one representing good, and another symbolizing everything he tries to repress.
 icone = images/VsNothingBloxBG.png
-cor_fundo = #f5d000, #000000
 tamanho = ~12,3 MB
 criador = Netuke
 criador_icone = yt
@@ -405,7 +401,6 @@ titulo_en = V.S BBPanzu
 descricao = Vs BBPanzu é um port para a CDEV Engine que coloca você frente a frente com um dos maiores criadores de mods da história de Friday Night Funkin': BBPanzu. Conhecido por sua criatividade e por ter dado vida a inúmeros personagens icônicos da comunidade, ele aqui não é apenas uma referência, é o seu oponente.
 descricao_en = Vs BB Panzu is a port for the CDEV Engine that pits you against one of the greatest mod creators in Friday Night Funkin' history: BB Panzu. Known for his creativity and for bringing to life countless iconic characters in the community, here he's not just a reference, he's your opponent.
 icone = images/VsBBPanzuBG.png
-cor_fundo = #00ff00, #000000
 tamanho = ~10,1 MB
 criador = Netuke
 criador_icone = yt
@@ -422,7 +417,6 @@ titulo_en = T.E.C 9
 descricao = Um simples mod da arma T.E.C 9 para o L.A.C
 descricao_en = A simple mod of the T.E.C 9 weapon for the L.A.C.
 icone = images/TEC9BG.png
-cor_fundo = #000000, #0c1524
 tamanho = ~42,7 MB
 criador = Netuke
 criador_icone = yt
@@ -439,7 +433,6 @@ titulo_en = Undertale
 descricao = Undertale é muito mais do que um RPG independente — é uma experiência que desafia tudo o que você espera de um jogo do gênero. Criado por Toby Fox, ele coloca você no controle de uma criança que cai no Subsolo, um mundo habitado por monstros que não são exatamente o que parecem.
 descricao_en = Undertale is much more than an indie RPG — it's an experience that challenges everything you expect from a game of the genre. Created by Toby Fox, it puts you in control of a child who falls into the Underground, a world inhabited by monsters that aren't exactly what they seem.
 icone = images/UndertaleBG.png
-cor_fundo = #a8a8a8, #000000
 tamanho = ~PT-BR: 123 MB | EN-US: 142,7 MB
 criador = Toby Fox
 criador_icone = yt
@@ -453,7 +446,6 @@ titulo_en = Omori
 descricao = Omori é um RPG psicológico que mergulha profundamente em temas como culpa, trauma e escapismo. Desenvolvido pela Omocat, o jogo acompanha um garoto que vive dividido entre um mundo colorido de fantasia e uma realidade muito mais pesada e dolorosa.
 descricao_en = Omori is a psychological RPG that delves deeply into themes such as guilt, trauma, and escapism. Developed by Omocat, the game follows a boy who lives torn between a colorful fantasy world and a much heavier and more painful reality.
 icone = images/OmoriBG.png
-cor_fundo = #ffffff, #000000
 tamanho = ~PT-BR: 745,9 MB | EN-US: 686,2 MB
 criador = Omocat
 criador_icone = yt
@@ -467,11 +459,22 @@ titulo_en = Cuphead
 descricao = Cuphead é um jogo de ação e plataforma que se destaca pelo seu estilo visual único, totalmente inspirado nos desenhos animados dos anos 1930. Com animações feitas à mão, trilha sonora com forte influência de jazz e uma direção artística impecável, o jogo entrega uma experiência que parece saída diretamente de um desenho antigo — mas com dificuldade moderna.
 descricao_en = Cuphead is an action-platformer that stands out for its unique visual style, entirely inspired by 1930s cartoons. With hand-drawn animations, a soundtrack heavily influenced by jazz, and impeccable art direction, the game delivers an experience that feels like it came straight out of an old cartoon—but with modern difficulty.
 icone = images/CupheadBG.png
-cor_fundo = #ffee00, #000000
 tamanho = ~730,5 MB
 criador = Studio MDHR
 criador_icone = yt
 link = https://drive.google.com/file/d/1DXn3sswlgijPlVLr8uUX7d0f30Q_KCVI/view?usp=drive_link
+
+[item:jogos_zenexfunkin]
+pagina = jogos
+categoria = roblox
+titulo = Zenex Funkin'
+titulo_en = Zenex Funkin'
+descricao = Zenex Funkin' é um jogo de ritmo no Roblox inspirado em FNF onde você pode jogar várias músicas conhecidas e testar seu tempo para acertar todas as notas no ritmo certo. Desafie outros jogadores, treine sua precisão e tente fazer a maior pontuação possível. Quanto melhor seu timing, maior será sua pontuação. Se você gosta de jogos de música e desafios de ritmo, Zenex Funkin' é um jogo feito para você. Novas músicas e melhorias podem ser adicionadas no futuro. 🎵
+descricao_en = Zenex Funkin' is a rhythm game on Roblox inspired by FNF where you can play various well-known songs and test your timing to hit all the notes in the right rhythm. Challenge other players, train your accuracy, and try to get the highest score possible. The better your timing, the higher your score. If you like music games and rhythm challenges, Zenex Funkin' is for you. New songs and improvements may be added in the future. 🎵
+icone = images/ZenexFunkinBG.png
+criador = Netuke
+criador_icone = yt
+versoes = PLAY>>https://www.roblox.com/pt/games/124630300328425/Project-Zenex-Funkin
 
 
 # ============================================================
@@ -492,6 +495,7 @@ tipo_fixo = home
 icone = 🏠
 nome = Início
 nome_en = Home
+musica = musics/MenuMusic.ogg
 
 [aba:downloads]
 tipo_fixo = downloads
