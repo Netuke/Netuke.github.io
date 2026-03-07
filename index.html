@@ -235,6 +235,35 @@ footer strong{color:var(--text)}
   .logo{font-size:.9rem}
   .hero h1{font-size:1.7rem}
 }
+
+/* ── MODAL DE MISSÕES ── */
+.mission-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .25s}
+.mission-overlay.show{opacity:1;pointer-events:all}
+.mission-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;width:100%;max-width:440px;overflow:hidden;transform:translateY(20px);transition:transform .25s;box-shadow:0 0 60px rgba(0,0,0,.6)}
+.mission-overlay.show .mission-box{transform:translateY(0)}
+.mission-header{padding:22px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.mission-header-info h2{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;margin-bottom:4px}
+.mission-header-info p{font-size:.78rem;color:var(--muted);line-height:1.5}
+.mission-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.2rem;padding:2px;line-height:1;flex-shrink:0;transition:color .2s}
+.mission-close:hover{color:var(--text)}
+.mission-tasks{padding:16px 24px;display:flex;flex-direction:column;gap:10px}
+.mission-task{display:flex;align-items:center;gap:12px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;transition:all .2s}
+.mission-task.done{border-color:rgba(0,229,255,.3);background:rgba(0,229,255,.05)}
+.mission-task-icon{font-size:1.3rem;flex-shrink:0;width:28px;text-align:center}
+.mission-task-info{flex:1;min-width:0}
+.mission-task-info strong{font-size:.85rem;font-weight:600;display:block;margin-bottom:2px}
+.mission-task-info span{font-size:.74rem;color:var(--muted)}
+.mission-task-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.7rem;transition:all .2s}
+.mission-task.done .mission-task-check{background:var(--accent);border-color:var(--accent);color:#0a0d14;font-weight:900}
+.mission-task-btn{background:linear-gradient(135deg,var(--accent2),var(--accent));color:#0a0d14;border:none;border-radius:8px;padding:6px 12px;font-size:.75rem;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:all .2s}
+.mission-task-btn:hover{transform:scale(1.05)}
+.mission-task-btn.done-btn{background:rgba(0,229,255,.1);color:var(--accent);border:1px solid rgba(0,229,255,.2);cursor:default;transform:none}
+.mission-footer{padding:14px 24px 20px}
+.mission-dl-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#0a0d14;font-family:'Syne',sans-serif;font-size:.95rem;font-weight:800;padding:13px;border-radius:11px;text-decoration:none;border:none;cursor:pointer;transition:all .25s;opacity:.4;pointer-events:none}
+.mission-dl-btn.unlocked{opacity:1;pointer-events:all;box-shadow:0 0 28px rgba(0,229,255,.28)}
+.mission-dl-btn.unlocked:hover{transform:translateY(-2px);box-shadow:0 0 42px rgba(0,229,255,.42)}
+.mission-progress{font-size:.72rem;color:var(--muted);text-align:center;margin-bottom:10px}
+.mission-progress span{color:var(--accent);font-weight:700}
 </style>
 </head>
 <body>
@@ -266,6 +295,27 @@ footer strong{color:var(--text)}
   </div>
 </nav>
 
+
+<!-- MODAL DE MISSÕES -->
+<div class="mission-overlay" id="mission-overlay" onclick="missionOverlayClick(event)">
+  <div class="mission-box">
+    <div class="mission-header">
+      <div class="mission-header-info">
+        <h2 id="mission-title">🔒 Desbloquear Download</h2>
+        <p id="mission-desc">Complete as tarefas abaixo para liberar o download.</p>
+      </div>
+      <button class="mission-close" onclick="closeMission()">✕</button>
+    </div>
+    <div class="mission-tasks" id="mission-tasks"></div>
+    <div class="mission-footer">
+      <div class="mission-progress" id="mission-progress"></div>
+      <a id="mission-dl-btn" class="mission-dl-btn" href="#" target="_blank">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+        <span id="mission-dl-label">Baixar</span>
+      </a>
+    </div>
+  </div>
+</div>
 <div id="app"><div class="loading"><h2>⚙️ Carregando...</h2><p>Lendo config.txt...</p></div></div>
 <audio id="bg-audio" loop></audio>
 
@@ -280,7 +330,7 @@ async function loadConfig(){
   catch(e){ return null; }
 }
 function parseConfig(raw){
-  const cfg={site:{},badges:{},paginas:{},categorias:{},itens:{},abas:{}};
+  const cfg={site:{},badges:{},paginas:{},categorias:{},itens:{},abas:{},missoes:{}};
   let section=null,sType=null,sKey=null;
   for(let line of raw.split('\n')){
     line=line.trim();
@@ -300,6 +350,8 @@ function parseConfig(raw){
       else if(sType==='item'){sKey=p[1];cfg.itens[sKey]={};section=cfg.itens[sKey];}
       else if(sType==='aba'){sKey=p[1];cfg.abas[sKey]={blocos:[]};section=cfg.abas[sKey];}
       else if(sType==='bloco'){const abaKey=p[1];if(!cfg.abas[abaKey])cfg.abas[abaKey]={blocos:[]};const blk={};cfg.abas[abaKey].blocos.push(blk);section=blk;}
+      else if(sType==='missao'){sKey=p.slice(1).join(':');cfg.missoes[sKey]={tarefas:[]};section=cfg.missoes[sKey];}
+      else if(sType==='tarefa'){const mk=p.slice(1).join(':');if(!cfg.missoes[mk])cfg.missoes[mk]={tarefas:[]};const t={};cfg.missoes[mk].tarefas.push(t);section=t;}
       else section=null;
       continue;
     }
@@ -445,7 +497,7 @@ function buildDownloads(cfg, abaKey){
       </div>
       ${subTabs.replace(/id="tabs-\${pgKey}"/,`id="${tabsId}"`).replace(/filterCat\(this,'\${pgKey}'/g,`filterCat(this,'${abaKey}-${pgKey}'`)}
       <div class="downloads-grid" id="${gridId}">
-        ${pgItens.map(([k,v])=>buildCard(k,v,pgKey,cats,cfg.badges)).join('')}
+        ${pgItens.map(([k,v])=>buildCard(k,v,pgKey,cats,cfg.badges,cfg)).join('')}
       </div>
     </div>`;
   }
@@ -472,7 +524,8 @@ function buildDownloads(cfg, abaKey){
 }
 
 // ── BUILD CARD ──
-function buildCard(key,item,pgKey,cats,badges){
+function buildCard(key,item,pgKey,cats,badges,cfg){
+  cfg=cfg||_cfg||{};
   // Badges — múltiplos separados por | (ex: badge = novo | beta | exclusivo)
   let badgeHtml='';
   if(item.badge){
@@ -528,13 +581,24 @@ function buildCard(key,item,pgKey,cats,badges){
       if(sepIdx>0){ label=v.slice(0,sepIdx).trim(); href=v.slice(sepIdx+2).trim()||'#'; }
       else { label=v; href='#'; }
       const target=href!=='#'?' target="_blank"':'';
-      return `<a href="${href}"${target} class="dl-btn-ver">⬇ ${label}</a>`;
+      // Busca missão por "item:versao" primeiro, depois "item" como fallback
+      const missaoKeyVer=`${key}:${label}`;
+      const hasMissaoVer=_cfg&&_cfg.missoes&&(_cfg.missoes[missaoKeyVer]||_cfg.missoes[key]);
+      const verMissaoKey=(_cfg&&_cfg.missoes&&_cfg.missoes[missaoKeyVer])?missaoKeyVer:key;
+      const verClick=hasMissaoVer
+        ? `onclick="event.preventDefault();openMission('${verMissaoKey}','${href}','${label}',_cfg)"`
+        : target;
+      return `<a href="${href}" ${verClick} class="dl-btn-ver">⬇ ${label}</a>`;
     }).join('');
     downloadHtml=`<div class="dl-versions">${btns}</div>`;
   } else {
     const href=item.link||'#';
-    const target=href!=='#'?' target="_blank"':'';
-    downloadHtml=`<div class="dl-meta"><span class="dl-size">${cf(item,'tamanho')?'📦 '+cf(item,'tamanho'):''}</span><a href="${href}"${target} class="dl-btn">⬇ ${currentLang==='en'?'Download':'Baixar'}</a></div>`;
+    const missaoKeySingle=key;
+    const hasMissao=_cfg&&_cfg.missoes&&_cfg.missoes[missaoKeySingle];
+    const dlClick=hasMissao
+      ? `onclick="event.preventDefault();openMission('${missaoKeySingle}','${href}','${cf(item,'titulo')||key}',_cfg)"`
+      : (href!=='#'?'target="_blank"':'');
+    downloadHtml=`<div class="dl-meta"><span class="dl-size">${cf(item,'tamanho')?'📦 '+cf(item,'tamanho'):''}</span><a href="${href}" ${dlClick} class="dl-btn">⬇ ${currentLang==='en'?'Download':'Baixar'}</a></div>`;
   }
   const tamanhoLabel=cf(item,'tamanho');
   const sizeUnderVersions=item.versoes&&tamanhoLabel?`<div class="dl-size" style="margin-top:6px">📦 ${tamanhoLabel}</div>`:'';
@@ -870,6 +934,106 @@ function setupMusicObservers(cfg){
     });
   });
 }
+
+
+// ── SISTEMA DE MISSÕES ──
+let _missionState = {}; // { taskKey: true/false }
+let _missionTarget = null; // { href, label }
+
+function openMission(itemKey, href, label, cfg){
+  const missao = cfg.missoes && cfg.missoes[itemKey];
+  if(!missao) { window.open(href,'_blank'); return; }
+
+  _missionTarget = { href, label };
+  _missionState = {};
+
+  // Título e descrição do modal
+  const titulo = cf(missao,'titulo') || (currentLang==='en'?'Unlock Download':'Desbloquear Download');
+  const desc   = cf(missao,'descricao') || (currentLang==='en'?'Complete the tasks below to unlock the download.':'Complete as tarefas abaixo para liberar o download.');
+  document.getElementById('mission-title').textContent = '🔒 ' + titulo;
+  document.getElementById('mission-desc').textContent  = desc;
+  document.getElementById('mission-dl-label').textContent = currentLang==='en'?'Download':'Baixar';
+
+  // Tarefas
+  const tarefas = missao.tarefas || [];
+  const container = document.getElementById('mission-tasks');
+  container.innerHTML = '';
+
+  tarefas.forEach((t, i) => {
+    const key = 'task_' + i;
+    _missionState[key] = false;
+    const nome  = cf(t,'nome')  || t.nome  || '';
+    const dica  = cf(t,'dica')  || t.dica  || '';
+    const link  = t.link  || '#';
+    const icone = t.icone || '✅';
+    const btnTxt = cf(t,'botao') || (currentLang==='en'?'Go':'Ir');
+
+    const div = document.createElement('div');
+    div.className = 'mission-task';
+    div.id = 'mission-task-' + key;
+    div.innerHTML = `
+      <div class="mission-task-icon">${icone}</div>
+      <div class="mission-task-info">
+        <strong>${nome}</strong>
+        ${dica ? `<span>${dica}</span>` : ''}
+      </div>
+      <a href="${link}" target="_blank" class="mission-task-btn" id="mission-btn-${key}"
+         onclick="missionTaskClick('${key}', this)">${btnTxt} ↗</a>
+      <div class="mission-task-check" id="mission-check-${key}"></div>
+    `;
+    container.appendChild(div);
+  });
+
+  updateMissionProgress();
+  document.getElementById('mission-overlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function missionTaskClick(key, btn){
+  // Mark as done after a short delay (user opened the link)
+  setTimeout(() => {
+    _missionState[key] = true;
+    const task  = document.getElementById('mission-task-' + key);
+    const check = document.getElementById('mission-check-' + key);
+    if(task)  task.classList.add('done');
+    if(check) check.textContent = '✓';
+    btn.textContent = currentLang==='en' ? 'Done ✓' : 'Feito ✓';
+    btn.classList.add('done-btn');
+    btn.onclick = null;
+    updateMissionProgress();
+  }, 1800);
+}
+
+function updateMissionProgress(){
+  const total = Object.keys(_missionState).length;
+  const done  = Object.values(_missionState).filter(Boolean).length;
+  const dlBtn = document.getElementById('mission-dl-btn');
+  const prog  = document.getElementById('mission-progress');
+
+  if(total > 0){
+    prog.innerHTML = currentLang==='en'
+      ? `<span>${done}</span> of <span>${total}</span> tasks completed`
+      : `<span>${done}</span> de <span>${total}</span> tarefas concluídas`;
+  }
+
+  if(done >= total && total > 0){
+    dlBtn.href = _missionTarget.href;
+    dlBtn.classList.add('unlocked');
+    document.getElementById('mission-title').textContent = '🔓 ' + (currentLang==='en'?'Download Unlocked!':'Download Liberado!');
+  } else {
+    dlBtn.classList.remove('unlocked');
+    dlBtn.href = '#';
+  }
+}
+
+function closeMission(){
+  document.getElementById('mission-overlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+function missionOverlayClick(e){
+  if(e.target === document.getElementById('mission-overlay')) closeMission();
+}
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeMission(); });
 
 // ── INIT ──
 async function init(){
