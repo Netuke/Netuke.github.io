@@ -22,11 +22,11 @@ nav{position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);background:rgba
 .nav-row1{max-width:1100px;margin:0 auto;padding:0 16px;display:flex;align-items:center;gap:10px;height:58px}
 .logo{font-family:'Syne',sans-serif;font-size:1.35rem;font-weight:800;letter-spacing:-.5px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;cursor:pointer;white-space:nowrap;flex-shrink:0;text-decoration:none}
 .logo span{-webkit-text-fill-color:var(--accent3)}
-.nav-search{display:flex;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:9px;overflow:hidden;flex:1;min-width:0;transition:border-color .2s}
+.nav-search{display:flex;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:9px;overflow:hidden;flex:1;min-width:0;transition:border-color .2s;max-width:100%}
 .nav-search:focus-within{border-color:rgba(0,229,255,.35)}
 .nav-search input{flex:1;min-width:0;background:transparent;border:none;outline:none;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.85rem;padding:9px 12px}
 .nav-search input::placeholder{color:var(--muted)}
-.nav-search button{background:transparent;border:none;cursor:pointer;color:var(--muted);padding:9px 10px;display:flex;align-items:center;flex-shrink:0;transition:color .2s}
+.nav-search button{background:transparent;border:none;cursor:pointer;color:var(--muted);padding:9px 10px;display:flex;align-items:center;flex-shrink:0;transition:color .2s;min-width:36px;min-height:36px;justify-content:center}
 .nav-search button:hover{color:var(--accent)}
 .nav-search .clear-search{display:none;font-size:.85rem;padding:9px 8px;color:var(--muted);line-height:1}
 .nav-search .clear-search:hover{color:var(--accent3)}
@@ -187,7 +187,7 @@ footer strong{color:var(--text)}
 
 /* RESPONSIVE */
 @media(max-width:700px){
-  .nav-row1{padding:0 12px;height:52px;gap:8px}
+  .nav-row1{padding:0 10px;height:52px;gap:6px}
   .logo{font-size:1.15rem}
   .btn-translate{padding:6px 10px;font-size:.74rem}
   .hero{padding:56px 0 36px}
@@ -204,9 +204,12 @@ footer strong{color:var(--text)}
   .features-grid{grid-template-columns:1fr 1fr}
 }
 @media(max-width:500px){
-  .wrapper{padding:0 12px}
-  .logo{font-size:1rem}
+  .wrapper{padding:0 10px}
+  .logo{font-size:.9rem}
   .btn-translate span{display:none}
+  .btn-translate{padding:5px 8px;font-size:.72rem}
+  .nav-search input{font-size:.82rem;padding:8px 8px}
+  .nav-search button{padding:8px 8px;min-width:32px}
   .hero{padding:42px 0 30px}
   .hero h1{font-size:1.95rem;letter-spacing:-.5px}
   .hero p{font-size:.92rem}
@@ -278,6 +281,12 @@ footer strong{color:var(--text)}
 .search-group-title{display:flex;align-items:center;gap:8px;font-family:'Syne',sans-serif;font-size:.8rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent2);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
 .search-empty{text-align:center;padding:70px 20px;color:var(--muted)}
 .search-empty h3{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:700;color:var(--text);margin-bottom:8px}
+@media(max-width:360px){
+  .logo{font-size:.82rem;letter-spacing:0}
+  .btn-translate{padding:5px 7px}
+  .nav-search input{font-size:.78rem;padding:7px 6px}
+  .nav-search button{padding:7px 7px;min-width:30px}
+}
 </style>
 </head>
 <body>
@@ -289,7 +298,7 @@ footer strong{color:var(--text)}
   <div class="nav-row1">
     <a class="logo" onclick="goHome()">Netuke<span>.Workshop</span></a>
     <div class="nav-search">
-      <input type="text" id="search-input" placeholder="Pesquisar..." oninput="handleSearch(this.value);updateClearBtn()"/>
+      <input type="text" id="search-input" placeholder="Pesquisar..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" oninput="handleSearch(this.value);updateClearBtn()" onchange="handleSearch(this.value);updateClearBtn()" oncompositionend="handleSearch(this.value);updateClearBtn()"/>
       <button class="clear-search" onclick="clearSearch();updateClearBtn()" title="Limpar">✕</button>
       <button onclick="handleSearch(document.getElementById('search-input').value)">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
