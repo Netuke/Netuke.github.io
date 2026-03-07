@@ -28,6 +28,9 @@ nav{position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);background:rgba
 .nav-search input::placeholder{color:var(--muted)}
 .nav-search button{background:transparent;border:none;cursor:pointer;color:var(--muted);padding:9px 10px;display:flex;align-items:center;flex-shrink:0;transition:color .2s}
 .nav-search button:hover{color:var(--accent)}
+.nav-search .clear-search{display:none;font-size:.85rem;padding:9px 8px;color:var(--muted);line-height:1}
+.nav-search .clear-search:hover{color:var(--accent3)}
+.nav-search.has-text .clear-search{display:flex}
 
 /* Translate button */
 .btn-translate{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:500;padding:7px 13px;border-radius:8px;cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0}
@@ -264,6 +267,17 @@ footer strong{color:var(--text)}
 .mission-dl-btn.unlocked:hover{transform:translateY(-2px);box-shadow:0 0 42px rgba(0,229,255,.42)}
 .mission-progress{font-size:.72rem;color:var(--muted);text-align:center;margin-bottom:10px}
 .mission-progress span{color:var(--accent);font-weight:700}
+
+/* ── PÁGINA DE RESULTADOS DE BUSCA ── */
+#page-search{display:none;animation:fadeUp .35s ease both}
+#page-search.active{display:block}
+.search-results-header{padding:48px 0 24px}
+.search-results-header h2{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;margin-bottom:6px}
+.search-results-header p{color:var(--muted);font-size:.87rem}
+.search-group{margin-bottom:36px}
+.search-group-title{display:flex;align-items:center;gap:8px;font-family:'Syne',sans-serif;font-size:.8rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent2);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.search-empty{text-align:center;padding:70px 20px;color:var(--muted)}
+.search-empty h3{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:700;color:var(--text);margin-bottom:8px}
 </style>
 </head>
 <body>
@@ -275,7 +289,8 @@ footer strong{color:var(--text)}
   <div class="nav-row1">
     <a class="logo" onclick="goHome()">Netuke<span>.Workshop</span></a>
     <div class="nav-search">
-      <input type="text" id="search-input" placeholder="Buscar downloads..." oninput="handleSearch(this.value)"/>
+      <input type="text" id="search-input" placeholder="Pesquisar..." oninput="handleSearch(this.value);updateClearBtn()"/>
+      <button class="clear-search" onclick="clearSearch();updateClearBtn()" title="Limpar">✕</button>
       <button onclick="handleSearch(document.getElementById('search-input').value)">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
       </button>
@@ -290,8 +305,8 @@ footer strong{color:var(--text)}
   <div class="music-bar" id="music-bar">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="color:var(--accent2)"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
     <span id="music-name"></span>
-    <button class="music-btn" id="music-toggle" onclick="toggleMusic()">▶ Play</button>
-    <button class="music-btn" onclick="stopMusic()">■ <span data-pt="Parar" data-en="Stop">Parar</span></button>
+    <button class="music-btn" id="music-toggle" onclick="toggleMusic()">▶ <span id="music-play-label">Play</span></button>
+    <button class="music-btn" onclick="stopMusic()">■ <span id="music-stop-label">Parar</span></button>
   </div>
 </nav>
 
@@ -718,17 +733,20 @@ function applyLangUI(){
     btn.querySelector('span').textContent=currentLang==='pt'?'English':'Português';
   }
   const si=document.getElementById('search-input');
-  if(si) si.placeholder=currentLang==='en'?'Search downloads...':'Buscar downloads...';
+  if(si) si.placeholder=currentLang==='en'?'Search...':'Pesquisar...';
   document.documentElement.lang=currentLang==='en'?'en':'pt-BR';
   // Rebuild nav tabs with new language
   if(_cfg) buildNavTabs(_cfg);
+  _updateMusicBarLang();
   // Restore active page
   const activePage=_activePage||('aba-'+(Object.keys(_cfg?.abas||{})[0]||''));
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  if(activePage){
+  if(_activePage==='search'){
+    const q=document.getElementById('search-input').value;
+    if(q) handleSearch(q);
+  } else if(activePage){
     document.getElementById('page-'+activePage)?.classList.add('active');
-    // tab id is always 'tab-aba-KEY'
     const abaKey=activePage.startsWith('aba-')?activePage.slice(4):activePage;
     document.getElementById('tab-aba-'+abaKey)?.classList.add('active');
   }
@@ -740,21 +758,134 @@ function cf(obj, key){
 }
 
 // ── MUSIC ──
-let currentMusic=null,musicPlaying=false;
+let currentMusic=null, musicPlaying=false, _musicLocked=false;
+let _pendingMusic=null, _userInteracted=false;
+let _currentMusicSource=null; // {type:'aba'|'pagina', key:string}
 const audio=document.getElementById('bg-audio');
-function loadMusic(src,name){
-  if(!src){document.getElementById('music-bar').classList.remove('show');audio.pause();return;}
+
+// Na primeira interação do usuário, retoma música pendente (mobile)
+function _onFirstInteraction(){
+  _userInteracted=true;
+  if(_pendingMusic){
+    const {src,name}=_pendingMusic;
+    _pendingMusic=null;
+    playMusic(src,name);
+  } else if(currentMusic && !musicPlaying){
+    // Já tem src carregado mas não tocou por política do browser
+    audio.play().then(()=>{ musicPlaying=true; _setPlayBtn(true); }).catch(()=>{});
+  }
+}
+document.addEventListener('click',    _onFirstInteraction, {once:true, capture:true});
+document.addEventListener('touchend', _onFirstInteraction, {once:true, capture:true});
+document.addEventListener('keydown',  _onFirstInteraction, {once:true, capture:true});
+
+function _showPendingMusicBar(){
+  const {src,name}=_pendingMusic;
+  // Preparar audio
   audio.src=src;
-  document.getElementById('music-name').textContent=name||src;
-  document.getElementById('music-bar').classList.add('show');
-  document.getElementById('music-toggle').textContent='▶ Play';
+  audio.load();
+  currentMusic=src;
   musicPlaying=false;
+  // Mostrar barra imediatamente
+  _updateMusicName(name||src);
+  document.getElementById('music-bar').classList.add('show');
+  _setPlayBtn(false);
+  // Tentar autoplay
+  const p=audio.play();
+  if(p&&p.then){
+    p.then(()=>{
+      musicPlaying=true;
+      _setPlayBtn(true);
+      _pendingMusic=null;
+      _userInteracted=true;
+    }).catch(()=>{
+      // Bloqueado pelo browser — _pendingMusic permanece para _onFirstInteraction usar
+      // A barra já está visível com ▶ Play para o usuário clicar
+    });
+  } else {
+    _pendingMusic=null;
+  }
 }
+
+// Toca uma música pelo src — ignora se já está tocando a mesma
+// force=true troca mesmo que seja a mesma (ex: ao recarregar)
+function playMusic(src, name, force){
+  if(!src){ silenceMusic(); return; }
+  if(!force && currentMusic===src){
+    if(!musicPlaying){
+      audio.play().then(()=>{ musicPlaying=true; _setPlayBtn(true); }).catch(()=>{});
+    }
+    return;
+  }
+  currentMusic=src;
+  _pendingMusic=null; // cancela qualquer pendente anterior
+  audio.pause();
+  audio.src=src;
+  audio.load();
+  _updateMusicName(name||src);
+  document.getElementById('music-bar').classList.add('show');
+  musicPlaying=false;
+  _setPlayBtn(false);
+  const p=audio.play();
+  if(p&&p.then){
+    p.then(()=>{ musicPlaying=true; _setPlayBtn(true); })
+     .catch(()=>{ musicPlaying=false; _setPlayBtn(false); });
+  }
+}
+
+// Para e esconde a barra
+function silenceMusic(){
+  audio.pause();
+  audio.currentTime=0;
+  currentMusic=null;
+  musicPlaying=false;
+  _pendingMusic=null;
+  _currentMusicSource=null;
+  _setPlayBtn(false);
+  document.getElementById('music-bar').classList.remove('show');
+}
+
+// Só pausa, mantém src e barra visível
+function stopMusic(){
+  audio.pause();
+  audio.currentTime=0;
+  musicPlaying=false;
+  _setPlayBtn(false);
+}
+
 function toggleMusic(){
-  if(musicPlaying){audio.pause();document.getElementById('music-toggle').textContent='▶ Play';musicPlaying=false;}
-  else{audio.play().catch(()=>{});document.getElementById('music-toggle').textContent='⏸ Pausar';musicPlaying=true;}
+  if(musicPlaying){ audio.pause(); musicPlaying=false; _setPlayBtn(false); }
+  else { audio.play().then(()=>{ musicPlaying=true; _setPlayBtn(true); }).catch(()=>{}); }
 }
-function stopMusic(){audio.pause();audio.currentTime=0;document.getElementById('music-toggle').textContent='▶ Play';musicPlaying=false;}
+
+function _updateMusicName(name){
+  document.getElementById('music-name').textContent=name||'';
+}
+function _retranslateMusicName(){
+  // Retraduz o nome da música na barra quando o idioma muda
+  if(!_currentMusicSource||!_cfg) return;
+  const {type,key}=_currentMusicSource;
+  if(type==='pagina'&&_cfg.paginas[key]){
+    _updateMusicName(cf(_cfg.paginas[key],'nome')||key);
+  } else if(type==='aba'&&_cfg.abas[key]){
+    _updateMusicName(cf(_cfg.abas[key],'nome')||key);
+  }
+}
+function _setPlayBtn(playing){
+  const btn=document.getElementById('music-toggle');
+  const lbl=document.getElementById('music-play-label');
+  if(lbl) lbl.textContent=playing?(currentLang==='en'?'Pause':'Pausar'):'Play';
+  if(btn) btn.innerHTML=(playing?'⏸ ':'▶ ')+'<span id="music-play-label">'+(playing?(currentLang==='en'?'Pause':'Pausar'):'Play')+'</span>';
+}
+function _updateMusicBarLang(){
+  _setPlayBtn(musicPlaying);
+  const stop=document.getElementById('music-stop-label');
+  if(stop) stop.textContent=currentLang==='en'?'Stop':'Parar';
+  _retranslateMusicName();
+}
+
+// Legado — loadMusic ainda chamado por observers antigos
+function loadMusic(src,name){ playMusic(src,name); }
 
 // ── PAGE / FILTER ──
 let _cfg=null;
@@ -772,21 +903,27 @@ function goDownloads(){
 }
 let _activePage='';
 function showPage(name){
+  if(_activePage!=='search') _prevActivePage=_activePage;
   _activePage=name;
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('page-'+name)?.classList.add('active');
   document.getElementById('tab-'+name)?.classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
-  // Check if this is a downloads aba
   const abaKey=name.startsWith('aba-')?name.slice(4):name;
-  const isDownloads=_cfg&&_cfg.abas[abaKey]?.tipo_fixo==='downloads';
+  const aba=_cfg&&_cfg.abas[abaKey];
+  const isDownloads=aba?.tipo_fixo==='downloads';
   if(isDownloads){
     resetSearch(abaKey);
-  } else {
-    stopMusic();
-    document.getElementById('music-bar').classList.remove('show');
-    currentMusic=null;
+  }
+  // Regra de música: sempre silencia ao trocar de aba
+  // Se a aba tem música própria, toca ela
+  // Se é downloads sem música, os IntersectionObservers cuidam da troca por seção ao scrollar
+  silenceMusic();
+  const abaMusicSrc=aba?.musica||null;
+  if(abaMusicSrc){
+    _currentMusicSource={type:'aba',key:abaKey};
+    playMusic(abaMusicSrc, cf(aba,'nome')||abaKey);
   }
 }
 function filterCat(btn,tabsKey,cat){
@@ -804,62 +941,136 @@ function filterCat(btn,tabsKey,cat){
   const el=document.getElementById('count-'+tabsKey);
   if(el) el.textContent=vis+(vis===1?' item':' itens');
 }
-// Get the active downloads aba key
+// ── BUSCA UNIVERSAL ──
 function getActiveDlAbaKey(){
   if(!_cfg) return null;
-  // Find which downloads aba is currently active, or first one
   const dlAbas=Object.entries(_cfg.abas).filter(([,a])=>a.tipo_fixo==='downloads');
   const active=dlAbas.find(([k])=>document.getElementById('page-aba-'+k)?.classList.contains('active'));
   return (active||dlAbas[0]||[])[0]||null;
 }
+
+function isHomeActive(){
+  if(!_cfg) return false;
+  const homeEntry=Object.entries(_cfg.abas).find(([,a])=>a.tipo_fixo==='home');
+  if(!homeEntry) return false;
+  return document.getElementById('page-aba-'+homeEntry[0])?.classList.contains('active')||false;
+}
+
 function handleSearch(val){
   const q=val.trim().toLowerCase();
-  const abaKey=getActiveDlAbaKey();
-  if(!q){resetSearch(abaKey);return;}
-  if(!abaKey) return;
-  const dlPgId='page-aba-'+abaKey;
-  if(!document.getElementById(dlPgId)?.classList.contains('active')){
+  if(!q){ clearSearchPage(); return; }
+  if(!_cfg) return;
+
+  const universal=isHomeActive()||_activePage==='search';
+
+  if(universal){
+    // ── BUSCA UNIVERSAL (vem da página inicial) ──
+    const dlAbas=Object.entries(_cfg.abas).filter(([,a])=>a.tipo_fixo==='downloads');
+    if(!dlAbas.length) return;
+    let totalFound=0;
+    let groupsHtml='';
+    dlAbas.forEach(([abaKey,aba])=>{
+      const pgId='page-aba-'+abaKey;
+      const cards=document.querySelectorAll('#'+pgId+' .dl-card');
+      const matches=[];
+      cards.forEach(card=>{
+        const text=(card.dataset.search||'')+(card.querySelector('h3')?.textContent||'').toLowerCase();
+        if(text.includes(q)) matches.push(card.outerHTML);
+      });
+      if(!matches.length) return;
+      totalFound+=matches.length;
+      const abaName=cf(aba,'nome')||abaKey;
+      const abaIcon=aba.icone||'📂';
+      const resLabel=currentLang==='en'?`result${matches.length!==1?'s':''}`:`resultado${matches.length!==1?'s':''}`;
+      groupsHtml+=`
+        <div class="search-group">
+          <div class="search-group-title">
+            <span style="font-size:14px">${abaIcon}</span> ${abaName}
+            <span style="color:var(--muted);font-weight:400;font-size:.74rem;margin-left:4px">${matches.length} ${resLabel}</span>
+          </div>
+          <div class="downloads-grid">${matches.join('')}</div>
+        </div>`;
+    });
+    const titulo=currentLang==='en'?'Search results':'Resultados da busca';
+    const clearLabel=currentLang==='en'?'Clear':'Limpar';
+    const sub=totalFound>0
+      ?(currentLang==='en'?`${totalFound} result${totalFound!==1?'s':''} for`:`${totalFound} resultado${totalFound!==1?'s':''} para`)+` "<strong>${val.trim()}</strong>" <button class="clear-btn" onclick="clearSearch();updateClearBtn()">✕ ${clearLabel}</button>`
+      :(currentLang==='en'?`No results for "<strong>${val.trim()}</strong>" <button class="clear-btn" onclick="clearSearch();updateClearBtn()">✕ ${clearLabel}</button>`:`Nenhum resultado para "<strong>${val.trim()}</strong>" <button class="clear-btn" onclick="clearSearch();updateClearBtn()">✕ ${clearLabel}</button>`);
+    const emptyHtml=totalFound===0?`<div class="search-empty"><h3>${currentLang==='en'?'Nothing found 😕':'Nada encontrado 😕'}</h3><p>${currentLang==='en'?'Try a different term.':'Tente outro termo.'}</p></div>`:'';
+    let pg=document.getElementById('page-search');
+    if(!pg){pg=document.createElement('div');pg.id='page-search';document.getElementById('app').appendChild(pg);}
+    pg.innerHTML=`<div class="wrapper"><div class="search-results-header"><h2>${titulo}</h2><p>${sub}</p></div>${groupsHtml}${emptyHtml}<div style="padding-bottom:60px"></div></div>`;
     document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-    document.getElementById(dlPgId)?.classList.add('active');
-    document.getElementById('tab-aba-'+abaKey)?.classList.add('active');
-    _activePage='aba-'+abaKey;
+    pg.classList.add('active');
+    _activePage='search';
+    window.scrollTo({top:0,behavior:'smooth'});
+  } else {
+    // ── BUSCA LOCAL (dentro da aba de downloads ativa) ──
+    const abaKey=getActiveDlAbaKey();
+    if(!abaKey) return;
+    const dlPgId='page-aba-'+abaKey;
+    if(!document.getElementById(dlPgId)?.classList.contains('active')){
+      document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      document.getElementById(dlPgId)?.classList.add('active');
+      document.getElementById('tab-aba-'+abaKey)?.classList.add('active');
+      _activePage='aba-'+abaKey;
+    }
+    let found=0;
+    document.querySelectorAll('#'+dlPgId+' .dl-card').forEach(card=>{
+      const m=(card.dataset.search||'').includes(q)||(card.querySelector('h3')?.textContent||'').toLowerCase().includes(q);
+      card.classList.toggle('hidden',!m);
+      if(m) found++;
+    });
+    document.querySelectorAll('#'+dlPgId+' .game-section').forEach(s=>{
+      s.style.display=s.querySelectorAll('.dl-card:not(.hidden)').length>0?'':'none';
+    });
+    const si=document.getElementById('search-info-'+abaKey);
+    const st=document.getElementById('search-term-'+abaKey);
+    if(si) si.style.display='block';
+    if(st) st.textContent=val.trim();
+    document.getElementById('no-results-'+abaKey)?.classList.toggle('show',found===0);
   }
-  let found=0;
-  document.querySelectorAll('#'+dlPgId+' .dl-card').forEach(c=>{
-    const m=(c.dataset.search||'').includes(q)||(c.querySelector('h3')||{}).textContent?.toLowerCase().includes(q);
-    c.classList.toggle('hidden',!m);
-    if(m) found++;
-  });
-  document.querySelectorAll('#'+dlPgId+' .game-section').forEach(s=>{
-    s.style.display=s.querySelectorAll('.dl-card:not(.hidden)').length>0?'':'none';
-  });
-  const si=document.getElementById('search-info-'+abaKey);
-  const st=document.getElementById('search-term-'+abaKey);
-  if(si) si.style.display='block';
-  if(st) st.textContent=val.trim();
-  document.getElementById('no-results-'+abaKey)?.classList.toggle('show',found===0);
 }
-function clearSearch(abaKey){
+
+function clearSearchPage(){
+  const pg=document.getElementById('page-search');
+  if(pg) pg.classList.remove('active');
+  // Se pesquisa local (aba dl ativa), limpar os cards ocultos também
+  const abaKey=getActiveDlAbaKey();
+  if(abaKey){
+    const pgId='page-aba-'+abaKey;
+    document.querySelectorAll('#'+pgId+' .dl-card').forEach(c=>c.classList.remove('hidden'));
+    document.querySelectorAll('#'+pgId+' .game-section').forEach(s=>s.style.display='');
+    const si=document.getElementById('search-info-'+abaKey);
+    if(si) si.style.display='none';
+    document.getElementById('no-results-'+abaKey)?.classList.remove('show');
+  }
+  const prevPage=_prevActivePage||('aba-'+(Object.keys(_cfg?.abas||{})[0]||''));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+prevPage)?.classList.add('active');
+  document.getElementById('tab-aba-'+prevPage.replace('aba-',''))?.classList.add('active');
+  _activePage=prevPage;
+}
+
+function clearSearch(){
   document.getElementById('search-input').value='';
-  resetSearch(abaKey||getActiveDlAbaKey());
+  updateClearBtn();
+  clearSearchPage();
 }
-function resetSearch(abaKey){
-  if(!abaKey) abaKey=getActiveDlAbaKey();
-  if(!abaKey) return;
-  const pgId='page-aba-'+abaKey;
-  document.querySelectorAll('#'+pgId+' .dl-card').forEach(c=>c.classList.remove('hidden'));
-  document.querySelectorAll('#'+pgId+' .game-section').forEach(s=>s.style.display='');
-  const si=document.getElementById('search-info-'+abaKey);
-  if(si) si.style.display='none';
-  document.getElementById('no-results-'+abaKey)?.classList.remove('show');
-  if(_cfg) Object.keys(_cfg.paginas).forEach(pk=>{
-    const tabsKey=abaKey+'-'+pk;
-    const t=document.querySelector('#tabs-'+tabsKey+' .sub-tab');
-    if(t) filterCat(t,tabsKey,'all');
-  });
+function updateClearBtn(){
+  const val=document.getElementById('search-input').value;
+  document.querySelector('.nav-search')?.classList.toggle('has-text',val.length>0);
 }
-document.getElementById('search-input').addEventListener('keydown',e=>{if(e.key==='Enter')handleSearch(e.target.value);});
+
+// resetSearch mantido para compatibilidade com showPage
+function resetSearch(abaKey){}
+
+let _prevActivePage='';
+document.getElementById('search-input').addEventListener('keydown',e=>{if(e.key==='Escape'){document.getElementById('search-input').value='';updateClearBtn();clearSearchPage();}});
+document.getElementById('search-input').addEventListener('focus',()=>{ if(_activePage!=='search') _prevActivePage=_activePage; });
 
 // SVGs for built-in page types
 const SVG_HOME = `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>`;
@@ -905,32 +1116,32 @@ function buildAllPages(cfg){
 }
 
 function setupMusicObservers(cfg){
-  // Get ALL downloads aba keys
   const dlKeys=Object.entries(cfg.abas).filter(([,a])=>a.tipo_fixo==='downloads').map(([k])=>k);
   if(!dlKeys.length) return;
-  // For each downloads aba, for each pagina with musica, observe its section
-  const allDlAbas=dlKeys;
   dlKeys.forEach(dlKey=>{
+    const isFirstDlAba=dlKeys[0]===dlKey;
+    const dlAba=cfg.abas[dlKey];
     const dlPageId='page-aba-'+dlKey;
-    const isFirstDlAba=allDlAbas[0]===dlKey;
     Object.entries(cfg.paginas).forEach(([pk,pg])=>{
       if(!pg.musica) return;
-      // Only observe if this pagina belongs to this aba
       const pgAba=pg.aba||'';
       if(pgAba && pgAba!==dlKey) return;
       if(!pgAba && !isFirstDlAba) return;
-      const secId='section-'+dlKey+'-'+pk;
-      const sec=document.getElementById(secId);
+      const sec=document.getElementById('section-'+dlKey+'-'+pk);
       if(!sec) return;
-      new IntersectionObserver(entries=>entries.forEach(e=>{
-        if(e.isIntersecting&&document.getElementById(dlPageId)?.classList.contains('active')){
-          const musicSrc=pg.musica;
-          if(currentMusic===musicSrc) return;
-          currentMusic=musicSrc;
-          loadMusic(musicSrc, cf(pg,'nome')||pg.nome||pk);
-          audio.play().then(()=>{musicPlaying=true;document.getElementById('music-toggle').textContent='⏸ Pausar';}).catch(()=>{});
-        }
-      }),{threshold:0.3}).observe(sec);
+      new IntersectionObserver(entries=>{
+        const e=entries[0];
+        // Só reage quando entra em tela (ignora saída)
+        if(!e.isIntersecting) return;
+        // Aba de downloads precisa estar ativa
+        if(!document.getElementById(dlPageId)?.classList.contains('active')) return;
+        // Aba com música própria → não sobrescreve
+        if(dlAba?.musica) return;
+        // Já tocando essa → nada a fazer
+        if(currentMusic===pg.musica && musicPlaying) return;
+        _currentMusicSource={type:'pagina',key:pk};
+        playMusic(pg.musica, cf(pg,'nome')||pg.nome||pk);
+      },{threshold:0.3, rootMargin:'0px 0px -20% 0px'}).observe(sec);
     });
   });
 }
@@ -1053,6 +1264,20 @@ async function init(){
   document.getElementById('app').innerHTML=buildAllPages(cfg)+buildFooter(cfg);
 
   setupMusicObservers(cfg);
+
+  // Activar primeira aba e tocar sua música (se tiver)
+  const firstAbaKey=Object.keys(cfg.abas)[0];
+  if(firstAbaKey){
+    // Não usar showPage aqui pois silenceMusic() vai rodar sem precisar
+    // Só tocar a música da primeira aba diretamente
+    const firstAba=cfg.abas[firstAbaKey];
+    if(firstAba.musica){
+      // Mostrar barra com Play — autoplay falha em mobile até interação
+      // Ao primeiro clique/toque do usuário, retoma
+      _pendingMusic={src:firstAba.musica, name:cf(firstAba,'nome')||firstAbaKey};
+      _showPendingMusicBar();
+    }
+  }
 }
 init();
 </script>
