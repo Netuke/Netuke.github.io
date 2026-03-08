@@ -113,72 +113,72 @@ feat4_desc_en = Original content, carefully created by Netuke himself for the co
 # ------------------------------------------------------------
 
 [badge:novo]
-texto = Novo
-texto_en = New
+texto = 𒈝 Novo
+texto_en = 𒈝 New
 cor_texto = #ff3d6e
 cor_fundo = #000000
 cor_borda = #000000
 cor_contorno = #000000
 
 [badge:cancelado]
-texto = ❌ Cancelado
-texto_en = ❌ Cancelled
+texto = 𒈝 Cancelado
+texto_en = 𒈝 Cancelled
 cor_texto = #B71C1C
 cor_fundo = #000000
 cor_borda = #000000
 cor_contorno = #000000
 
 [badge:desatualizado]
-texto = ⏳ Desatualizado
-texto_en = ⏳ Outdated
+texto = 𒈝 Desatualizado
+texto_en = 𒈝 Outdated
 cor_texto = #757575
 cor_fundo = #000000
 cor_borda = #000000
 cor_contorno = #000000
 
 [badge:modpack]
-texto = 📦 ModPack
-texto_en = 📦 ModPack
+texto = 𒈝 ModPack
+texto_en = 𒈝 ModPack
 cor_texto = #6A1B9A
 cor_fundo = #000000
 cor_borda = #000000
-cor_contorno = #ffffff
+cor_contorno = #000000
 
 [badge:port]
-texto = 🔁 Port
-texto_en = 🔁 Port
+texto = 𒈝 Port
+texto_en = 𒈝 Port
 cor_texto = #1565C0
 cor_fundo = #000000
 cor_borda = #000000
 cor_contorno = #000000
 
 [badge:mod]
-texto = 🎮 Mod
-texto_en = 🎮 Mod
-cor_texto = #2E7D32
+texto = 𒈝 Mod
+texto_en = 𒈝 Mod
+cor_texto = #ff9900
 cor_fundo = #000000
 cor_borda = #000000
 cor_contorno = #000000
 
 [badge:android]
-texto = 📱 Android
-texto_en = 📱 Android
+texto = 𒈝 Android
+texto_en = 𒈝 Android
 cor_texto = #A4C639
 cor_fundo = #000000
 cor_borda = #000000
 cor_contorno = #000000
 
 [badge:embreve]
-texto = 🚧 Em Breve
-texto_en = 🚧 Soon
-cor_texto = #FF9800
+texto = 𒈝 Em Breve
+texto_en = 𒈝 Soon
+cor_texto = #00ffc8
 cor_fundo = #000000
 cor_borda = #000000
 cor_contorno = #000000
 
 [badge:beta]
-texto = 🧪 Beta
-texto_en = 🧪 Beta
+texto = 𒈝 Beta
+texto_en = 𒈝 Beta
 cor_texto = #FF9800
 cor_fundo = #000000
 cor_borda = #000000
