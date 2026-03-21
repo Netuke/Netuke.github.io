@@ -17,10 +17,10 @@ descricao_hero = A Netuke.Workshop é onde o Netuke disponibiliza downloads, fer
 descricao_hero_en = Netuke.Workshop is where Netuke shares downloads, tools and exclusive content — all made by him, completely free for you.
 
 titulo_hero = Netuke.Workshop
-titulo_hero_en = Content created by someone who knows.
+titulo_hero_en = Netuke.Workshop
 
 subtitulo_hero = Workshop
-subtitulo_hero_en = someone who knows.
+subtitulo_hero_en = Workshop
 
 tag_hero = Bem-vindo ao Site
 tag_hero_en = Welcome to the Site
