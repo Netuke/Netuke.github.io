@@ -3,7 +3,14 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Netuke.Workshop</title>
+<title>Netuke.Workshop — Mods, Jogos e Downloads</title>
+<meta name="description" content="Bem-vindo à Netuke.Workshop! Baixe mods, jogos e conteúdos selecionados e verificados pelo Netuke. Comunidade, qualidade e tudo de graça."/>
+<meta property="og:title" content="Netuke.Workshop — Mods & Downloads"/>
+<meta property="og:description" content="Mods, jogos e downloads selecionados e verificados pelo Netuke. Acesse agora e faça parte da comunidade!"/>
+<meta property="og:type" content="website"/>
+<link rel="icon" type="image/png" href="images/Icon.png"/>
+<link rel="shortcut icon" href="images/Icon.png"/>
+<link rel="apple-touch-icon" href="images/Icon.png"/>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
 :root{--bg:#080b10;--surface:#0f1520;--surface2:#151c2c;--accent:#00e5ff;--accent2:#7b5cff;--accent3:#ff3d6e;--text:#e8edf5;--muted:#6b7897;--border:rgba(255,255,255,0.06)}
@@ -747,6 +754,7 @@ function applyLangUI(){
   // Rebuild nav tabs with new language
   if(_cfg) buildNavTabs(_cfg);
   _updateMusicBarLang();
+  _updatePageMeta();
   // Restore active page
   const activePage=_activePage||('aba-'+(Object.keys(_cfg?.abas||{})[0]||''));
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -869,6 +877,19 @@ function _retranslateMusicName(){
 function _setPlayBtn(playing){
   const btn=document.getElementById('music-toggle');
   if(btn) btn.innerHTML=(playing?'⏸ ':'▶ ')+'<span id="music-play-label">'+(playing?(currentLang==='en'?'Pause':'Pausar'):'Play')+'</span>';
+}
+function _updatePageMeta(){
+  if(currentLang==='en'){
+    document.title='Netuke.Workshop — Mods, Games & Downloads';
+    document.getElementById('meta-desc')?.setAttribute('content','Welcome to Netuke.Workshop! Download mods, games and content selected and verified by Netuke. Community, quality and all for free.');
+    document.getElementById('meta-og-title')?.setAttribute('content','Netuke.Workshop — Mods, Games & Downloads');
+    document.getElementById('meta-og-desc')?.setAttribute('content','Mods, games and downloads selected and verified by Netuke. Join now and be part of the community!');
+  } else {
+    document.title='Netuke.Workshop — Mods, Jogos e Downloads';
+    document.getElementById('meta-desc')?.setAttribute('content','Bem-vindo à Netuke.Workshop! Baixe mods, jogos e conteúdos selecionados e verificados pelo Netuke. Comunidade, qualidade e tudo de graça.');
+    document.getElementById('meta-og-title')?.setAttribute('content','Netuke.Workshop — Mods, Jogos & Downloads');
+    document.getElementById('meta-og-desc')?.setAttribute('content','Mods, jogos e downloads selecionados e verificados pelo Netuke. Acesse agora e faça parte da comunidade!');
+  }
 }
 function _updateMusicBarLang(){
   _setPlayBtn(musicPlaying);
